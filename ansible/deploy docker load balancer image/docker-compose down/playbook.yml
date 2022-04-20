@@ -1,0 +1,10 @@
+---
+#Choosing the host for the task
+- hosts: all
+  #apply 'super user do' over the task
+  become: yes 
+
+  tasks:  
+    - name: Docker-compose down.
+      shell: cd /home/scripthead/docker-projects/samba/ && docker-compose down    
+

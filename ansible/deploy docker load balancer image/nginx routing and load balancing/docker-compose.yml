@@ -1,0 +1,61 @@
+version: '3.4'
+services:  
+  #Servers
+  host-1:
+    image: nginx
+    expose:
+      - "80"  
+    volumes:
+      - ./services/index.1.html:/usr/share/nginx/html/index.html
+    networks: 
+      project:
+        aliases:
+          - host-1
+            
+  host-2:
+    image: nginx
+    expose:
+      - "80"
+    volumes:
+      - ./services/index.2.html:/usr/share/nginx/html/index.html
+    networks: 
+      project:
+        aliases:
+          - host-2
+ 
+  host-3:
+    image: nginx
+    expose:
+      - "80"
+    volumes:
+      - ./services/index.3.html:/usr/share/nginx/html/index.html
+    networks: 
+      project:
+        aliases:
+          - host-3
+
+  #Load balancer 
+  proxy:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - "host-1"      
+      - "host-2"     
+      - "host-3"      
+    networks: 
+      project:
+        aliases:
+          - proxy
+ 
+          
+#Local network
+networks:
+  project:
+    driver: bridge
+    ipam:
+      driver: default
+
+

@@ -1,0 +1,31 @@
+---
+#Choosing the host for the task
+- hosts: servers
+  #apply 'super user do' over the task
+  become: yes 
+
+  tasks:  
+    - name: Make work directory.
+      file:
+        dest: /home/scripthead/docker-projects/load-balancer/ 
+        owner: scripthead 
+        group: scripthead
+        mode: 0777
+        state: directory    
+          
+    - name: Copy folder the project.
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: scripthead 
+        group: scripthead
+        mode: 0777
+      with_items:
+        - src: 'nginx routing and load balancing'
+          dest: /home/scripthead/docker-projects/load-balancer/
+     
+    - name: Deploy Docker Compose stack.
+      docker_compose:
+        project_src: /home/scripthead/docker-projects/load-balancer/'nginx routing and load balancing'/
+        files:
+          - docker-compose.yaml

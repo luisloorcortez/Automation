@@ -1,0 +1,17 @@
+version: '3.4'
+services:
+  samba:
+    image: dperson/samba
+    environment:
+      TZ: 'ECUADOR/GUAYAQUIL'
+    restart: unless-stopped
+    command: '-u "tets;test" -s "shared;/media;yes;no;yes"'
+    stdin_open: true
+    tty: true
+    ports:
+      - "137:137/udp"
+      - "138:138/udp"
+      - "139:139/tcp"
+      #- "445:445/tcp" #you could only have one port open.
+    volumes:
+      - ../../shared:/media #don't forget change the path to folder shared.

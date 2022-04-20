@@ -1,0 +1,7 @@
+---
+mysql_root_password: "test"
+app_user: "scripthead"
+http_host: "master-of-puppets.com"
+http_conf: "master-of-puppets.conf"
+http_port: "80"
+disable_default: false

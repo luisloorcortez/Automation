@@ -1,0 +1,40 @@
+---
+#Choosing the host for the task
+- hosts: all
+  #apply 'super user do' over the task
+  become: yes
+  
+  
+  #task to make. This playbook make'll three task. 
+  tasks:
+    #Every task have a name, in this case install apache.
+    - name: Install Apache.
+        yum:
+        name:
+          - httpd
+          - httpd-devel
+        state: present
+    
+    #Every task have a name, in this case copy confuguration files.
+    - name: Copy configuration files.
+      copy:
+        
+        #We invoke the variable made above
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: 0644
+      
+      #At this moment we'll create the variables to use later.
+      with_items:
+        - src: httpd.conf
+          dest: /etc/httpd/conf/httpd.conf
+        - src: httpd-vhosts.conf
+          dest: /etc/httpd/conf/httpd-vhosts.conf
+    
+    #Every task have a name, in this case view the first line  bellow.
+    - name: Make sure Apache is started now and at boot.
+      
+      #The fist word in the bellow line is the name of tha module to use. Equal in tha lines above.
+      service: name=httpd state=started enabled=yes

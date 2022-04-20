@@ -1,0 +1,39 @@
+---
+#Choosing the host for the task
+- hosts: all
+  #apply 'super user do' over the task
+  become: yes 
+
+  tasks:  
+    - name: Make work directory.
+      file:
+        dest: /home/scripthead/docker-projects/samba/ 
+        owner: scripthead 
+        group: scripthead
+        mode: 0777
+        state: directory    
+    
+    - name: Make folder to share files.
+      file:
+        dest: /home/scripthead/shared
+        mode: 0777
+        owner: scripthead 
+        group: scripthead
+        state: directory
+          
+    - name: Copy folder the project.
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: scripthead 
+        group: scripthead
+        mode: 0777
+      with_items:
+        - src: docker-compose.yaml #server samba
+          dest: /home/scripthead/docker-projects/samba/
+     
+    - name: Deploy Docker Compose stack.
+      docker_compose:
+        project_src: /home/scripthead/docker-projects/samba/
+        files:
+          - docker-compose.yaml

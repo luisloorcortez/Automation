@@ -1,0 +1,48 @@
+---
+#Choosing the host for the task
+- hosts: app
+  #apply 'super user do' over the task
+  become: yes
+  
+    - name: Make work directory.
+      file:
+        dest: /home/scripthead/k0sctl
+        mode: 0777
+        owner: scripthead 
+        group: scripthead
+        state: directory
+    
+    - name: Copy files needed to k0sctl.
+      copy:
+        
+        #We invoke the variable made above
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: root
+        mode: 0774
+      with_items:
+        - src: k0sctl
+          dest: /home/scripthead/k0sctl
+          
+   - name: Make k0sctl.yml 
+     shell: cd /home/scripthead/k0sctl && ./k0sctl init > k0sctl.yml #Is better idea to send this file from master computer configured.
+   
+   - name: Make kubeconfig
+     shell: ./k0sctl kubeconfig > kubeconfig
+     
+   - name: export KUBECONFIG variable and we make it persistent
+     shell: export KUBECONFIG=/kubeconfig >> ~/.bashrc && source ~/.bashrc
+
+   #Install kubectl - ubuntu 20.04.
+   #Other linux distribution do this diferently. 
+    - name: Install kubectl.         
+      apt: 
+        name:
+          - kubectl
+        state: present        
+        
+   - name: Verify that everything is ok
+     shell: kubectl get nodes
+
+  # For more info, see: https://docs.k0sproject.io/v1.23.3+k0s.1/k0sctl-install/

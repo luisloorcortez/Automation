@@ -1,0 +1,13 @@
+---
+#Choosing the host for the task
+- hosts: all
+  #apply 'super user do' over the task
+  become: yes
+ 
+
+  tasks:
+    - name: Add local user to the docker group.
+      shell: usermod -aG docker scripthead #scripthead is the user.
+       
+    - name: Permissions to docker socket. #This will allow non-root users to use docker.
+      command: chmod 666 /var/run/docker.sock      
