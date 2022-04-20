@@ -9,11 +9,8 @@
   tasks:
     #Every task have a name, in this case install apache.
     - name: Install Apache.
-        yum:
-        name:
-          - httpd
-          - httpd-devel
-        state: present
+       yum: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+       loop: [ 'httpd', 'httpd', 'httpd-devel']
     
     #Every task have a name, in this case copy confuguration files.
     - name: Copy configuration files.
@@ -26,7 +23,7 @@
         group: root
         mode: 0644
       
-      #At this moment we'll create the variables to use later.
+    #At this moment we'll create the variables to use later.
       with_items:
         - src: httpd.conf
           dest: /etc/httpd/conf/httpd.conf
