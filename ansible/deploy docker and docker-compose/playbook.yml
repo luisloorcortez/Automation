@@ -1,36 +1,41 @@
 ---
 #Choosing the host for the task
-- hosts: all
+- hosts: vb
   #apply 'super user do' over the task
   become: yes
  
-  
-  #task for docker. 
+  #task for docker and docker-compose. 
   tasks:
     #Install docker on ubuntu - 20.04.
     - name: Install tool needed.         
       apt: name={{ item }} update_cache=yes state=latest
       loop: [ 'ca-certificates', 'curl', 'gnupg', 'lsb-release']
    
-    #ubuntu - 20.04
-    - name: Add Docker GPG apt Key
+    #ubuntu -> 20.04
+    - name: Add Docker GPG apt Key.
       apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
     
     #ubuntu - 20.04
-    - name: Add Docker Repository
+    - name: Add Docker Repository.
       apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu focal stable
         state: present
    
     #install docker app-group       
-    - name: Install docker and docker-compose
+    - name: Install docker and docker-compose.
       apt: name={{ item }} update_cache=yes state=latest
       loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io', 'docker-compose']
        
     #Enable docker daemon.
-    - name: Enable docker service  
+    - name: Enable docker service.  
       service: name=docker state=started enabled=yes
+    
+    - name: Add local user to the docker group.
+      shell: usermod -aG docker scripthead #scripthead is the user.
+       
+    - name: Permissions to docker socket. #This will allow non-root users to use docker.
+      command: chmod 666 /var/run/docker.sock      
        
 #For more information,see: https://docs.docker.com/engine/install/ubuntu/
