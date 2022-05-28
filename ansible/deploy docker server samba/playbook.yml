@@ -1,33 +1,36 @@
----
 #Choosing the host for the task
 - hosts: all
   #apply 'super user do' over the task
   become: yes 
 
   tasks:  
+    
+    - name: include secret
+      include_vars: secret.yml
+    
     - name: Make work directory.
       file:
-        dest: /home/scripthead/docker-projects/samba/ 
-        owner: scripthead 
-        group: scripthead
-        mode: 0777
+        dest: /home/"{{ user }}"/docker-projects/samba/ 
+        owner: "{{ user }}" 
+        group: "{{ user }}"
+        mode: "{{ access }}"
         state: directory    
     
     - name: Make folder to share files.
       file:
         dest: /home/scripthead/shared
-        mode: 0777
-        owner: scripthead 
-        group: scripthead
+        mode: "{{ access }}"
+        owner: "{{ user }}" 
+        group: "{{ user }}"
         state: directory
           
     - name: Copy folder the project.
       copy:
         src: "{{ item.src }}"
         dest: "{{ item.dest }}"
-        owner: scripthead 
-        group: scripthead
-        mode: 0777
+        owner: "{{ user }}" 
+        group: "{{ user }}"
+        mode: "{{ access }}"
       with_items:
         - src: docker-compose.yaml #server samba
           dest: /home/scripthead/docker-projects/samba/

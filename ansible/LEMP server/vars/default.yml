@@ -1,7 +1,7 @@
 ---
-mysql_root_password: "test"
+mysql_root_password: "plastika"
 app_user: "scripthead"
 http_host: "master-of-pupputs.com"
 http_conf: "master-of-pupputs.conf"
-http_port: "80"
+http_port: "443"
 disable_default: false
