@@ -1,8 +1,10 @@
 ---
 #Choosing the host for the task
-- hosts: all
-  #apply 'super user do' over the task
+- name: Provision Ubuntu
+  hosts: aws
   become: yes
+  become_method: sudo
+  remote_user: root
  
   
   #task for docker. 

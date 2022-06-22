@@ -1,5 +1,5 @@
 provider "aws" {
-region="us-east-1"
+region="us-west-1"
 }
 
 
@@ -34,7 +34,7 @@ resource "aws_key_pair" "deployer" {
 
 
 #Make security group and rules to this. (PD)
-resource "aws_security_group" "allow_ssh" {
+resource "aws_security_group" "allow_test_ssh" {
   name        = "allow_ssh"
   description = "Allow SSH inbound traffic"
   vpc_id      = var.vpc_id
@@ -66,7 +66,7 @@ resource "aws_instance" "test-qa" {
   instance_type = "t3.micro"                       #type instance
   key_name = aws_key_pair.deployer.key_name        #key_name-ssh (PD)
   vpc_security_group_ids = [
-    aws_security_group.allow_ssh.id                #add to security_group (PD+)
+    aws_security_group.allow_test_ssh.id           #add to security_group (PD+)
   ]
   tags = {
     Name = "Test-QA"                               #name, obviously...

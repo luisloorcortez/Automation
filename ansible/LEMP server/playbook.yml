@@ -1,6 +1,9 @@
 ---
-- hosts: ubu
-  become: true
+- name: Provision Ubuntu
+  hosts: ubu
+  become: yes
+  become_method: sudo
+  remote_user: root
   vars_files:
     - vars/default.yml
 
@@ -34,13 +37,11 @@
       notify: Reload Nginx
 
 # MySQL Configuration
-
     - name: Sets the root password
       mysql_user:
         name: root
         password: "{{ mysql_root_password }}"
         login_unix_socket: /var/run/mysqld/mysqld.sock
-        state: present
 
     - name: Removes all anonymous user accounts
       mysql_user:
@@ -57,8 +58,14 @@
         login_user: root
         login_password: "{{ mysql_root_password }}"
 
-# UFW Configuration
+    - name: Removes the MySQL test database
+      mysql_db:
+        name: test
+        state: absent
+        login_user: root
+        login_password: "{{ mysql_root_password }}"
 
+# UFW Configuration
     - name: "UFW - Allow HTTP on port {{ http_port }}"
       ufw:
         rule: allow
@@ -66,7 +73,6 @@
         proto: tcp
 
 # Sets Up PHP Info Page
-
     - name: Sets Up PHP Info Page
       template:
         src: "files/info.php.j2"
